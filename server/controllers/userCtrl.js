@@ -116,6 +116,18 @@ const userCtrl = {
             return res.status(500).json({msg: err.message})
         }
     },
+    deleteUser : async (req, res) =>{
+        try {
+            let user_id = req?.user?.id;
+            if(!user_id) return res.status(400).json({msg: "User id required"})
+            const result = await Users.findOneAndDelete({ _id:user_id})
+
+            if(!result) return res.status(400).json({msg: "User does not exist."})
+            return res.status(200).json({msg:'User deleted successfully'});
+        } catch (err) {
+            return res.status(500).json({msg: err.message})
+        }
+    },
     addCart: async (req, res) =>{
         try {
             const user = await Users.findById(req.user.id)
@@ -135,7 +147,7 @@ const userCtrl = {
 
 
 const createAccessToken = (user) =>{
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '7d'})
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '365d'})
 }
 const createRefreshToken = (user) =>{
     return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '7d'})

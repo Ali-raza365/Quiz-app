@@ -6,8 +6,7 @@ router.post('/register', userCtrl.register)
 router.post('/login', userCtrl.login)
 router.get('/all', userCtrl.getUsers)
 router.get('/info', auth,  userCtrl.getUser)
-router.get('/update', auth,  userCtrl.updateUser)
-
-
+router.put('/update', auth,  userCtrl.updateUser)
+router.post('/delete', auth,  userCtrl.deleteUser)
 
 module.exports = router

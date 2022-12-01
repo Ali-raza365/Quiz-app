@@ -1,4 +1,5 @@
 const Quiz = require('../models/quizModal')
+const Result = require('../models/result')
 const bcrypt = require('bcrypt')
 
 
@@ -41,7 +42,7 @@ const quizCtrl = {
                     return res.status(200).send(quizzes);
                }
                console.log(quizzes)
-                res.status(400).send("fsfsd data fsdf.");
+                res.status(400).send("quizzes not found");
           } catch (err) {
                console.log("Error", err);
                return res.status(500).json({ msg: err.message })
@@ -60,6 +61,65 @@ const quizCtrl = {
                return res.status(500).json({ msg: err.message })
           }
      },
+     submit: async (req, res, next) => {
+          try {
+            const { quiz_id, answers } = req.body;
+          let user_id = req?.user?.id
+          if(!user_id) return   res.status(400).send("user id require");
+          if(!quiz_id) return   res.status(400).send("quiz id require");
+      
+            const quiz = await Quiz.findById(quiz_id);
+            if (!quiz)  return   res.status(400).send("no quiz found");
+              let solved = 0;
+              const { questions } = quiz;
+              for (let i = 0; i < questions.length; i++) {
+                if (questions[i].answer === answers[i]) {
+                  solved++;
+                }
+               }
+              
+      
+              // update quiz stats
+              quiz.participated++;
+              quiz.flawless += Number(solved === questions.length); // + 0 or 1
+              const updatedQuiz = await Quiz.findByIdAndUpdate(quiz_id, quiz);
+              const newResult = new Result({ userId:user_id,quizId:quiz_id,score: solved,total:questions.length });
+              await newResult.save()
+     
+
+              const response = {
+                result:newResult,
+              };
+              res.status(200).send(response);
+      
+          } catch (err) {
+            console.log("Error", err);
+            return res.status(400).send("Invalid data given.");
+          }
+        },
+    update: async (req, res) =>{
+          try {
+              let {quizId,...others} =req.body
+              if(!quizId) return res.status(400).json({msg: "Quiz id required"})
+              const quiz = await Quiz.findOneAndUpdate(quizId,others,{returnOriginal: false})
+              if(!quiz) return res.status(400).json({msg: "Quiz does not exist."})
+              res.json(quiz)
+          } catch (err) {
+              return res.status(500).json({msg: err.message})
+          }
+      },
+      delete : async (req, res) =>{
+          try {
+               let {quizId} =req.body
+              if(!quizId) return res.status(400).json({msg: "Quiz id required"})
+              const result = await Quiz.findOneAndDelete({ _id:quizId})
+              console.log(result)
+              if(!result) return res.status(400).json({msg: "Quiz does not exist."})
+              return res.status(200).json({msg:'Quiz deleted successfully',result},);
+          } catch (err) {
+              return res.status(500).json({msg: err.message})
+          }
+      }
 }
 module.exports = quizCtrl
 
