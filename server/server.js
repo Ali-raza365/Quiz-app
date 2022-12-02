@@ -17,7 +17,7 @@ app.use(fileUpload({
 
 // Routes
 app.get('/',(req,res)=>{
-res.send('server starting')
+res.send('server')
 })
 
 app.use('/user', require('./routes/userRouter'))
