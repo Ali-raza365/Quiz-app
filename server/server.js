@@ -16,14 +16,15 @@ app.use(fileUpload({
 }))
 
 // Routes
+app.get('/',(req,res)=>{
+res.send('server starting')
+})
+
 app.use('/user', require('./routes/userRouter'))
 app.use('/quiz', require('./routes/quizRoute'))
 app.use('/result', require('./routes/resultRouter'))
-// app.use('/quiz', require('./routes/quizRoute'))
-// app.use('/api', require('./routes/categoryRouter'))
 app.use('/api', require('./routes/upload'))
-// app.use('/api', require('./routes/productRouter'))
-// app.use('/api', require('./routes/paymentRouter'))
+
 
 
 

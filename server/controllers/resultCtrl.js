@@ -1,7 +1,6 @@
 const Result = require("../models/result");
 const User = require("../models/userModel");
 const Quiz = require("../models/quizModal");
-const bcrypt = require("bcrypt");
 
 const resultCtrl = {
      findById: async (req, res, next) => {

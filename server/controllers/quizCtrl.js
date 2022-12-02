@@ -1,6 +1,5 @@
 const Quiz = require('../models/quizModal')
 const Result = require('../models/result')
-const bcrypt = require('bcrypt')
 
 
 const quizCtrl = {
